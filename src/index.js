@@ -20,6 +20,15 @@ class ServerlessWebpackPrisma {
     'node_modules/@prisma/engines/migration-engine*',
     '!node_modules/@prisma/engines/migration-engine-rhel*',
 
+    'node_modules/@prisma/engines/schema-engine*',
+    '!node_modules/@prisma/engines/schema-engine-rhel*',
+
+    'node_modules/prisma/node_modules/@prisma/engines/schema-engine*',
+    '!node_modules/prisma/node_modules/@prisma/engines/schema-engine-rhel*',
+
+    'node_modules/prisma/engines/schema-engine*',
+    '!node_modules/prisma/engines/schema-engine-rhel*',
+
     'node_modules/@prisma/engines/prisma-fmt*',
     '!node_modules/@prisma/engines/prisma-fmt-rhel*',
 
@@ -59,13 +68,20 @@ class ServerlessWebpackPrisma {
     return _.get(this.serverless, 'service.custom.webpack.packager', 'npm');
   }
 
+  getPrismaVersion({ cwd }) {
+    const command = `npm la prisma --parseable=true | awk -F@ '/prisma/ { print $NF }'`;
+    const version = childProcess.execSync(command, { cwd });
+    return version.toString();
+  }
+
   runPackageInstallCommand({ packageName, cwd, dev }) {
     let params = '';
+    let version = this.getPrismaVersion({ cwd });
     if (dev) params += '-D ';
     const command =
       this.getPackageManager() === 'npm'
-        ? `npm install ${params}${packageName}`
-        : `yarn add ${params}${packageName}`;
+        ? `npm install ${params}${packageName}${version}`
+        : `yarn add ${params}${packageName}${version}`;
     childProcess.execSync(command, { cwd });
   }
 

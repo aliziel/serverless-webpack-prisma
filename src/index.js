@@ -69,7 +69,7 @@ class ServerlessWebpackPrisma {
   }
 
   getPrismaVersion({ cwd }) {
-    const command = `npm la prisma --parseable=true | awk -F@ '/prisma/ { print $NF }'`;
+    const command = `npm pkg get devDependencies.prisma | awk '{ gsub(/[^0-9\.]/, ""); print }'`;
     const version = childProcess.execSync(command, { cwd }).toString();
     return /^[\d\.]+$/.test(version) ? `@${version}` : '';
   }

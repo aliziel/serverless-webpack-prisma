@@ -76,7 +76,8 @@ class ServerlessWebpackPrisma {
 
   runPackageInstallCommand({ packageName, cwd, dev }) {
     let params = '';
-    let version = this.getPrismaVersion({ cwd });
+    // let version = this.getPrismaVersion({ cwd });
+    const version = '@4.8.0';
     if (dev) params += '-D ';
 
     this.serverless.cli.log(`Installing ${packageName}${version}`);
